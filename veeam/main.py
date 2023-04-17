@@ -1,21 +1,26 @@
 import cli
-import os
-import pathlib
+import logs
 import time
 
 def main():
-    #args = cli.read()
-    project_dir = pathlib.Path(__file__).parent.resolve()
-    source_dir = project_dir + "/sample/src/"
-    replica_dir = project_dir + "/sample/replica/"
-    log_flie = project_dir + "/sample/log.txt"
-    interval = 10
+    args = cli.read()
+    #verify the arguments and exit if they are invalid i.e. non existing folders
+    if not cli.verify(args):
+        return -1
+    
+    #Write initialisation message to the console and the log file
+    # set up logging
+    log_stream = open(args.log_file, 'a')
+    logs.log(log_stream,"Initialising Sync")
+    start_time = time.time()
 
-
-    # if args:
-    #     print(args)
-    # else:
-    #     return -1
+    #get initial state of src folder and store in dictionary
+    
+    while True:
+        #
+        time.sleep(args.sync_interval - ((time.time() - start_time) % args.sync_interval))
+    
+        
 
 if __name__ == "__main__":
     main()
