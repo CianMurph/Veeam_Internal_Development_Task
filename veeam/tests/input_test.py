@@ -2,7 +2,7 @@
 import pytest
 import pathlib
 import cli  
-import sys
+import os
 
 def test_incorrect_input(capsys):
     #unit test for function called read
@@ -45,9 +45,9 @@ def test_incorrect_input_4(capsys):
 def test_correct_input():
     #Need to call the read function with values we know exist
     project_dir = str(pathlib.Path(__file__).parent.parent.resolve())
-    source_dir = project_dir + "/sample/src/"
-    replica_dir = project_dir + "/sample/replica/"
-    log_file = project_dir + "/sample/log.txt" 
+    source_dir = os.path.join(project_dir, "sample", "src")
+    replica_dir = os.path.join(project_dir, "sample", "replica")
+    log_file = os.path.join(project_dir, "sample", "log.text")
     interval = "10"
     #check that function returns correct values
     #The function should contain an argument parser with the passed values

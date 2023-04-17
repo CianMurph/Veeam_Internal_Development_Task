@@ -29,13 +29,16 @@ def get_changes(src_state, rep_state):
     delete_list = []
     update_list = []
     copy_list = []
-    for file, file_hash in rep_state:
+    print(rep_state.keys())
+    print(rep_state.values())
+    for file, file_hash in rep_state.items():
         if file not in src_state.keys():
             #The file has been removed from the src folder and should be deleted
             delete_list.append(file)
-        if src_state[file] and src_state[file] != file_hash:
-            #The MD5 in src is different so we need to update the file in rep
-            update_list.append(file)
+        if file in src_state.keys():
+            if src_state[file] != file_hash:
+                #The MD5 in src is different so we need to update the file in rep
+                update_list.append(file)
      #loop through src dict
     for file in src_state:
         if file not in rep_state.keys():
