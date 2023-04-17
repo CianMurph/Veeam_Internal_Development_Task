@@ -21,9 +21,9 @@ I chose Python for this assignment as it offers high-level abstractions and dyna
 ### Tech Stack
 ----------
 
-This project was written with python version 3.10.11
-Pip is used to manage dependencies
-Pytest is used to run tests
+This project was written with python version 3.10.11\
+Pip is used to manage dependencies\
+Pytest is used to run tests\
 
 ### Install
 ----------
