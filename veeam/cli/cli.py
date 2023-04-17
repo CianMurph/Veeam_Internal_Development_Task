@@ -29,6 +29,8 @@ def verify(args) -> bool:
         "replica_folder" : args.replica_folder,
         "log_file" : args.log_file
     }
+    
+ 
     return_value = True
     for path in paths:
         if not os.path.exists(paths[path]):
