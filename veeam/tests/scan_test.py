@@ -140,12 +140,14 @@ def test_get_changes_returns_new_file():
     if not os.path.exists(test_case_rep_dir):
         os.makedirs(test_case_rep_dir)
 
+    #Create a new file in the src dir that does not exist in the rep directory
     files_src = [os.path.join(test_case_src_dir, "test_file_0.txt")]
-
+    #Create the dictionary represesting src dir
     src_dict = write_files_and_compute_hash({}, files_src, files_src)
+    #Rep directory intialised as empty
     rep_dict = {}
     
-
+    #The new file should be returned as a change
     expected_ret = files_src
     list_1, list_2, list_3 = sync.get_changes(src_dict, rep_dict)
     assert list_1 == expected_ret
@@ -154,11 +156,67 @@ def test_get_changes_returns_new_file():
     assert list_2 == []
 
 
-# def test_update_files_returns_dict():
+def test_update_files_returns_dict():
+    test_case_dir = os.path.join(test_dir, "test_sync", 'test_update_files_fn_0')
+    test_case_src_dir = os.path.join(test_case_dir, "src")
+    test_case_rep_dir = os.path.join(test_case_dir, "rep")
+    test_log_file = os.path.join(test_case_dir, "log.txt")
+    if not os.path.exists(test_case_src_dir):
+        os.makedirs(test_case_src_dir)
+    if not os.path.exists(test_case_rep_dir):
+        os.makedirs(test_case_rep_dir)
+    if not os.path.exists(test_log_file):
+        with open(test_log_file, 'w') as f:
+            f.write("")
+    test_log_stream = open(test_log_file, 'a')
+    #Create a new file in the src dir that does not exist in the rep directory
+    files_src = [os.path.join(test_case_src_dir, "test_file_0.txt")]
+    #Create the dictionary represesting src dir
+    src_dict = write_files_and_compute_hash({}, files_src, files_src)
+    #Rep directory intialised as empty
+    rep_dict = {}
 
+    #Since above test passed we know that get changes will return the correct list 1
+    list_1, list_2, list_3 = sync.get_changes(src_dict, rep_dict)
+    #call update files and check that it returns a dictionary 
+    rep_dict = sync.update_files(src_dict, rep_dict, test_case_src_dir, test_case_rep_dir,list_1,test_log_stream)
 
-# def test_update_files_copies_new_file():
+    assert type(rep_dict) == dict
     
+    
+
+def test_update_files_copies_new_file():
+    test_case_dir = os.path.join(test_dir, "test_sync", 'test_update_files_fn_0')
+    test_case_src_dir = os.path.join(test_case_dir, "src")
+    test_case_rep_dir = os.path.join(test_case_dir, "rep")
+    test_log_file = os.path.join(test_case_dir, "log.txt")
+    if not os.path.exists(test_case_src_dir):
+        os.makedirs(test_case_src_dir)
+    if not os.path.exists(test_case_rep_dir):
+        os.makedirs(test_case_rep_dir)
+    if not os.path.exists(test_log_file):
+        with open(test_log_file, 'w') as f:
+            f.write("")
+    test_log_stream = open(test_log_file, 'a')
+    #Create a new file in the src dir that does not exist in the rep directory
+    files_src = [os.path.join(test_case_src_dir, "test_file_0.txt")]
+    #Create the dictionary represesting src dir
+    src_dict = write_files_and_compute_hash({}, files_src, files_src)
+    #Rep directory intialised as empty
+    rep_dict = {}
+
+    #Since above test passed we know that get changes will return the correct list 1
+    list_1, list_2, list_3 = sync.get_changes(src_dict, rep_dict)
+    #call update files and check that it returns a dictionary 
+    rep_dict = sync.update_files(src_dict, rep_dict, test_case_src_dir, test_case_rep_dir,list_1,test_log_stream)
+
+    #update files should have updated both the rep_dict and the actual directory
+    #we will check that both are equal to each other and that they are equal to the source
+    assert rep_dict == src_dict
+    #Scan the src folder because file names referece the src in rep dict
+    assert rep_dict == sync.scan_folder(test_case_src_dir)
+
+def test_update_flag_changes_output
 
 # def test_update_files_updates_edited_file():
 

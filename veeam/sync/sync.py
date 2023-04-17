@@ -49,7 +49,7 @@ def get_changes(src_state, rep_state):
 
 
 
-def update_files(src_dict, rep_dict, src_dir, rep_dir, changes_list, log_stream, update):
+def update_files(src_dict, rep_dict, src_dir, rep_dir, changes_list, log_stream, update = False):
     #loop through list and copy or update file from src to replica
     for file_path in changes_list:
         #get the file path relative to the source folder including subdirs etc
