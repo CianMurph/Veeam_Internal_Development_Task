@@ -1,3 +1,0 @@
-17:01:59 Copied /home/cian/projects/Veeam/veeam/tests/test_sync/test_update_files_fn_0/src/test_file_0.txt to /home/cian/projects/Veeam/veeam/tests/test_sync/test_update_files_fn_0/rep/test_file_0.txt
-17:07:22 Copied /home/cian/projects/Veeam/veeam/tests/test_sync/test_update_files_fn_0/src/test_file_0.txt to /home/cian/projects/Veeam/veeam/tests/test_sync/test_update_files_fn_0/rep/test_file_0.txt
-17:07:22 Copied /home/cian/projects/Veeam/veeam/tests/test_sync/test_update_files_fn_0/src/test_file_0.txt to /home/cian/projects/Veeam/veeam/tests/test_sync/test_update_files_fn_0/rep/test_file_0.txt

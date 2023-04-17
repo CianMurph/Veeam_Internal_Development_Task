@@ -117,13 +117,16 @@ def test_get_changes_returns_updated_file():
         os.makedirs(test_case_src_dir)
     if not os.path.exists(test_case_rep_dir):
         os.makedirs(test_case_rep_dir)
-
+    #Both source and replica folders will have the same file names
     files_src = [os.path.join(test_case_src_dir, "test_file_0.txt")]
     files_rep = [os.path.join(test_case_rep_dir, "test_file_0.txt")]
 
+    #Write to the source and replica files
     src_dict = write_files_and_compute_hash({}, files_src, files_src)
+    #True flag means that the content of the file in src and replica will be different
     rep_dict = write_files_and_compute_hash({}, files_rep, files_src, True)
 
+    #Since file content is different the file name will be returned as the difference
     expected_ret = [files_src[0]]
     list_1, list_2, list_3 = sync.get_changes(src_dict, rep_dict)
     assert list_1 == []
@@ -185,7 +188,7 @@ def test_update_files_returns_dict():
     
     
 
-def test_update_files_copies_new_file():
+def test_update_files_copies_new_file(capfd):
     test_case_dir = os.path.join(test_dir, "test_sync", 'test_update_files_fn_0')
     test_case_src_dir = os.path.join(test_case_dir, "src")
     test_case_rep_dir = os.path.join(test_case_dir, "rep")
@@ -215,9 +218,118 @@ def test_update_files_copies_new_file():
     assert rep_dict == src_dict
     #Scan the src folder because file names referece the src in rep dict
     assert rep_dict == sync.scan_folder(test_case_src_dir)
+    #Not best practice to test multiple things in one case but 
+    #to avoid repeating setup code I will also test that logs are correct here
+    out,err = capfd.readouterr()
+    assert f"Copied {files_src[0]} to " in out
+    
+def test_update_files_updates_edited_file(capfd):
+    #since get changes passed above we can reuse the code from that test to 
+    #initialise the changes list here
+    test_case_dir = os.path.join(test_dir, "test_sync", 'test_update_files_fn_2')
+    test_case_src_dir = os.path.join(test_case_dir, "src")
+    test_case_rep_dir = os.path.join(test_case_dir, "rep")
+    test_log_file = os.path.join(test_case_dir, "log.txt")
+    if not os.path.exists(test_case_src_dir):
+        os.makedirs(test_case_src_dir)
+    if not os.path.exists(test_case_rep_dir):
+        os.makedirs(test_case_rep_dir)
+    #initialise a log file for this test
+    if not os.path.exists(test_log_file):
+        with open(test_log_file, 'w') as f:
+            f.write("")
+    test_log_stream = open(test_log_file, 'a')
+    #Both source and replica folders will have the same file names
+    files_src = [os.path.join(test_case_src_dir, "test_file_0.txt")]
+    files_rep = [os.path.join(test_case_rep_dir, "test_file_0.txt")]
 
-def test_update_flag_changes_output
+    #Write to the source and replica files
+    src_dict = write_files_and_compute_hash({}, files_src, files_src)
+    #True flag means that the content of the file in src and replica will be different
+    rep_dict = write_files_and_compute_hash({}, files_rep, files_src, True)
 
-# def test_update_files_updates_edited_file():
+    #Since file content is different the file name will be returned as the difference
+    expected_ret = [files_src[0]]
 
-# def test_delete_files_removes_deleted_file():
+    #list 2 will be passed to the update function
+    list_1, list_2, list_3 = sync.get_changes(src_dict, rep_dict)
+
+    rep_dict = sync.update_files(src_dict, rep_dict, test_case_src_dir, test_case_rep_dir,list_2,test_log_stream, True)
+
+    #update files should have updated both the rep_dict and the actual directory
+    #we will check that both are equal to each other and that they are equal to the source
+    assert rep_dict == src_dict
+    #Scan the src folder because file names referece the src in rep dict
+    assert rep_dict == sync.scan_folder(test_case_src_dir)
+    #Not best practice to test multiple things in one case but 
+    #to avoid repeating setup code I will also test that logs are correct here
+    out,err = capfd.readouterr()
+    assert f"Updated value of {files_rep[0]} to match {files_src[0]}" in out
+
+def test_delete_files_removes_deleted_file(capfd):
+    #same as with last two we can use the setup from the comparison test 
+    test_case_dir = os.path.join(test_dir, "test_sync", 'test_update_files_fn_3')
+    test_case_src_dir = os.path.join(test_case_dir, "src")
+    test_case_rep_dir = os.path.join(test_case_dir, "rep")
+    test_log_file = os.path.join(test_case_dir, "log.txt")
+    if not os.path.exists(test_case_src_dir):
+        os.makedirs(test_case_src_dir)
+    if not os.path.exists(os.path.join(test_case_rep_dir ,"test_sub_dir")):
+        os.makedirs(os.path.join(test_case_rep_dir ,"test_sub_dir"))
+          #initialise a log file for this test
+    if not os.path.exists(test_log_file):
+        with open(test_log_file, 'w') as f:
+            f.write("")
+    test_log_stream = open(test_log_file, 'a')
+    
+   
+    files_src = [ os.path.join(test_case_src_dir, "test_file_0.txt")]
+    files_rep = [os.path.join(test_case_rep_dir, "test_file_0.txt"), os.path.join(test_case_rep_dir ,"test_sub_dir", "test_file_1.txt")]
+    #create src ref for deleted file
+    files_src_ref = [os.path.join(test_case_src_dir, "test_file_0.txt") ,os.path.join(test_case_src_dir ,"test_sub_dir", "test_file_1.txt")]
+    
+    
+    
+    #manually create files and sub directories and create state dict
+    src_dict = write_files_and_compute_hash({},files_src, files_src_ref)
+
+    #Create Replica Folder with additional files 
+    # keys reference src folder
+    # Additional files emulate deleting files in src folder
+    rep_dict = write_files_and_compute_hash({}, files_rep, files_src_ref)
+    
+    #File ref in position 1 does not exist in original array so should be returned
+    expected_ret = [files_src_ref[1]]
+    list_1, list_2, list_3 = sync.get_changes(src_dict, rep_dict)
+    rep_dict = sync.delete_files(rep_dict, test_case_src_dir, test_case_rep_dir, list_3, test_log_stream)
+
+    #we will check that both are equal to each other and that they are equal to the source
+    assert rep_dict == src_dict
+    #Scan the src folder because file names referece the src in rep dict
+    assert rep_dict == sync.scan_folder(test_case_src_dir)
+
+    #Not best practice to test multiple things in one case but 
+    #to avoid repeating setup code I will also test that logs are correct here
+    out,err = capfd.readouterr()
+    assert f"Deleted {files_rep[1]} from {test_case_rep_dir}" in out
+
+
+def test_convert_keys_fn():
+    test_case_dir = os.path.join(test_dir, "test_sync", 'test_convert_keys_fn_0')
+    test_case_src_dir = os.path.join(test_case_dir, "src")
+    test_case_rep_dir = os.path.join(test_case_dir, "rep")
+
+    #create dummy file directories in replica folder
+    rep_files = [os.path.join(test_case_rep_dir, 'file_0.txt'),os.path.join(test_case_rep_dir, 'file_1.txt'),os.path.join(test_case_rep_dir, 'file_2.txt')]
+    rep_dict = {}
+    #populate replica dictionary with dummy hash values
+    for i, file in enumerate(rep_files):
+        rep_dict[file] = {12345 + i}
+    
+    #do the same for the source folder
+    src_files = [os.path.join(test_case_src_dir, 'file_0.txt'),os.path.join(test_case_src_dir, 'file_1.txt'),os.path.join(test_case_src_dir, 'file_2.txt')]
+    src_dict = {}
+    for i, file in enumerate(src_files):
+        src_dict[file] = {12345 + i}
+
+    assert src_dict == sync.convert_keys(rep_dict, test_case_rep_dir, test_case_src_dir)
