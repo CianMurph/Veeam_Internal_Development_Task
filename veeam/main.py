@@ -1,4 +1,5 @@
 import cli
+import sync
 import logs
 import time
 
@@ -15,6 +16,7 @@ def main():
     start_time = time.time()
 
     #get initial state of src folder and store in dictionary
+    initial_state = sync.create_state_store(args.source_folder)
     
     while True:
         #

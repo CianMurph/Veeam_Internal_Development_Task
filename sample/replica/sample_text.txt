@@ -1,4 +1,0 @@
-This is a sample file to test the functionality of this program.
-Please feel free to edit this text to check if it is backed up correctly to the replica folder
-Have fun :)
-
