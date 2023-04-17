@@ -23,7 +23,7 @@ I chose Python for this assignment as it offers high-level abstractions and dyna
 
 This project was written with python version 3.10.11\
 Pip is used to manage dependencies\
-Pytest is used to run tests\
+Pytest is used to run tests
 
 ### Install
 ----------
